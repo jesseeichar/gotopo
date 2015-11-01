@@ -33,20 +33,16 @@ func TestCoords64CapacityAndDimensionsConstructor(t *testing.T) {
 	assert.Equal(t, 0, int(simpleCoords.NumCoords()), "Number of coordinates should be the 0")
 }
 func TestCoords64FromSlice(t *testing.T) {
-	simpleCoords, err := geom.NewCoords64FromSlice(3, []float64{1, 2, 3, 4, 5, 6})
+	simpleCoords := geom.NewCoords64FromSlice(3, []float64{1, 2, 3, 4, 5, 6})
 
-	assert.NoError(t, err)
 	assert.Equal(t, 3, int(simpleCoords.NumDim()), "Number of dimensions should be the 3")
 	assert.Equal(t, 2, int(simpleCoords.NumCoords()), "Number of coordinates should be the 2")
 	assert.Equal(t, []float64{1, 2, 3}, simpleCoords.Get(0).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 	assert.Equal(t, []float64{4, 5, 6}, simpleCoords.Get(1).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 
-	simpleCoords, err = geom.NewCoords64FromSlice(3, []float64{1, 2, 3, 4, 5})
-	assert.Error(t, err)
-	assert.Nil(t, simpleCoords)
+	assert.Panics(t, func() {geom.NewCoords64FromSlice(3, []float64{1, 2, 3, 4, 5})})
 
-	simpleCoords, err = geom.NewCoords64FromSlice(3, []float64{})
-	assert.NoError(t, err)
+	simpleCoords = geom.NewCoords64FromSlice(3, []float64{})
 	assert.Equal(t, 3, int(simpleCoords.NumDim()), "Number of dimensions should be the 3")
 	assert.Equal(t, 0, int(simpleCoords.NumCoords()), "Number of coordinates should be the 0")
 }
@@ -65,7 +61,6 @@ func TestCoords64Add(t *testing.T) {
 
 func TestCoords64Set(t *testing.T) {
 	CoordsSetTestImpl(t, func(values []float64) geom.Coords {
-		coords, _ := geom.NewCoords64FromSlice(2, values)
-		return coords
+		return geom.NewCoords64FromSlice(2, values)
 	})
 }

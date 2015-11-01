@@ -6,43 +6,40 @@ import (
 	"fmt"
 )
 
+func TestCoordString(t *testing.T) {
+	coord := geom.NewCoord(1, 2, 3, 4)
+	assert.Equal(t, "(1.000, 2.000, 3.000, 4.000)", coord.String())
+}
+
 func CoordsInsertRawTestImpl(t *testing.T, simpleCoords geom.Coords) {
-	err := simpleCoords.InsertRaw(0, []float64{2, 3})
-	assert.NoError(t, err, "Did not expect an error")
+	simpleCoords.InsertRaw(0, []float64{2, 3})
 	assert.Equal(t, 1, int(simpleCoords.NumCoords()), "Number of coordinates should be the 1")
 
 
-	err = simpleCoords.InsertRaw(0, []float64{2, 3, 4})
-	assert.Error(t, err, "Did not expect an error")
+	assert.Panics(t, func() {simpleCoords.InsertRaw(0, []float64{2, 3, 4})})
 	assert.Equal(t, 1, int(simpleCoords.NumCoords()), "Number of coordinates should be the 1")
 
-	err = simpleCoords.InsertRaw(0, []float64{2})
-	assert.Error(t, err)
+	assert.Panics(t, func() {simpleCoords.InsertRaw(0, []float64{2})})
 	assert.Equal(t, 1, int(simpleCoords.NumCoords()), "Number of coordinates should be the 1")
 
-	err = simpleCoords.InsertRaw(0, []float64{2})
-	assert.Error(t, err)
+	assert.Panics(t, func() {simpleCoords.InsertRaw(0, []float64{2})})
 	assert.Equal(t, 1, int(simpleCoords.NumCoords()), "Number of coordinates should be the 1")
 
-	err = simpleCoords.InsertRaw(2, []float64{2, 3})
-	assert.Error(t, err)
+	assert.Panics(t, func() {simpleCoords.InsertRaw(2, []float64{2, 3})})
 	assert.Equal(t, 1, int(simpleCoords.NumCoords()), "Number of coordinates should be the 1")
 
-	err = simpleCoords.InsertRaw(1, []float64{4, 5})
-	assert.NoError(t, err)
+	simpleCoords.InsertRaw(1, []float64{4, 5})
 	assert.Equal(t, 2, int(simpleCoords.NumCoords()), "Number of coordinates should be the 2")
 	assert.Equal(t, []float64{2, 3}, simpleCoords.Get(0).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 	assert.Equal(t, []float64{4, 5}, simpleCoords.Get(1).ToArray(), fmt.Sprintf("Incorrect second coordinate in %v", simpleCoords))
 
-	err = simpleCoords.InsertRaw(1, []float64{3, 4})
-	assert.NoError(t, err)
+	simpleCoords.InsertRaw(1, []float64{3, 4})
 	assert.Equal(t, 3, int(simpleCoords.NumCoords()), "Number of coordinates should be the 3")
 	assert.Equal(t, []float64{2, 3}, simpleCoords.Get(0).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 	assert.Equal(t, []float64{3, 4}, simpleCoords.Get(1).ToArray(), fmt.Sprintf("Incorrect second coordinate in %v", simpleCoords))
 	assert.Equal(t, []float64{4, 5}, simpleCoords.Get(2).ToArray(), fmt.Sprintf("Incorrect second coordinate in %v", simpleCoords))
 
-	err = simpleCoords.InsertRaw(0, []float64{-1, 0})
-	assert.NoError(t, err)
+	simpleCoords.InsertRaw(0, []float64{-1, 0})
 	assert.Equal(t, 4, int(simpleCoords.NumCoords()), "Number of coordinates should be the 4")
 	assert.Equal(t, []float64{-1, 0}, simpleCoords.Get(0).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 	assert.Equal(t, []float64{2, 3}, simpleCoords.Get(1).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
@@ -51,35 +48,29 @@ func CoordsInsertRawTestImpl(t *testing.T, simpleCoords geom.Coords) {
 }
 
 func CoordsInsertTestImpl(t *testing.T, simpleCoords geom.Coords) {
-	err := simpleCoords.Insert(1, geom.NewCoord(66, 32))
-	assert.Error(t, err)
+	assert.Panics(t, func() {simpleCoords.Insert(1, geom.NewCoord(66, 32))})
 	assert.Equal(t, 0, int(simpleCoords.NumCoords()), "Number of coordinates should be the 0")
 
-	err = simpleCoords.Insert(0, geom.NewCoord(1, 2))
-	assert.NoError(t, err)
+	simpleCoords.Insert(0, geom.NewCoord(1, 2))
 	assert.Equal(t, int(simpleCoords.NumCoords()), 1, "Number of coordinates should be the 1")
 	assert.Equal(t, []float64{1, 2}, simpleCoords.Get(0).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 
-	err = simpleCoords.Insert(2, geom.NewCoord(66, 32))
-	assert.Error(t, err)
+	assert.Panics(t, func() {simpleCoords.Insert(2, geom.NewCoord(66, 32))})
 	assert.Equal(t, 1, int(simpleCoords.NumCoords()), "Number of coordinates should be the 1")
 	assert.Equal(t, []float64{1, 2}, simpleCoords.Get(0).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 
-	err = simpleCoords.Insert(0, geom.NewCoord(-1, 0))
-	assert.NoError(t, err)
+	simpleCoords.Insert(0, geom.NewCoord(-1, 0))
 	assert.Equal(t, 2, int(simpleCoords.NumCoords()), "Number of coordinates should be the 2")
 	assert.Equal(t, []float64{-1, 0}, simpleCoords.Get(0).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 	assert.Equal(t, []float64{1, 2}, simpleCoords.Get(1).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 
-	err = simpleCoords.Insert(1, geom.NewCoord(1, 1))
-	assert.NoError(t, err)
+	simpleCoords.Insert(1, geom.NewCoord(1, 1))
 	assert.Equal(t, 3, int(simpleCoords.NumCoords()), "Number of coordinates should be the 3")
 	assert.Equal(t, []float64{-1, 0}, simpleCoords.Get(0).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 	assert.Equal(t, []float64{1, 1}, simpleCoords.Get(1).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 	assert.Equal(t, []float64{1, 2}, simpleCoords.Get(2).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 
-	err = simpleCoords.Insert(1, geom.NewCoord(1, 1, 4))
-	assert.Error(t, err)
+	assert.Panics(t, func() {simpleCoords.Insert(1, geom.NewCoord(1, 1, 4))})
 	assert.Equal(t, 3, int(simpleCoords.NumCoords()), "Number of coordinates should be the 3")
 	assert.Equal(t, []float64{-1, 0}, simpleCoords.Get(0).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 	assert.Equal(t, []float64{1, 1}, simpleCoords.Get(1).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
@@ -87,19 +78,16 @@ func CoordsInsertTestImpl(t *testing.T, simpleCoords geom.Coords) {
 }
 
 func CoordsAddTestImpl(t *testing.T, simpleCoords geom.Coords) {
-	err := simpleCoords.Add(geom.NewCoord(1, 2))
-	assert.NoError(t, err)
+	simpleCoords.Add(geom.NewCoord(1, 2))
 	assert.Equal(t, 1, int(simpleCoords.NumCoords()), "Number of coordinates should be the 1")
 	assert.Equal(t, []float64{1, 2}, simpleCoords.Get(0).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 
-	err = simpleCoords.Add(geom.NewCoord(3, 4))
-	assert.NoError(t, err)
+	simpleCoords.Add(geom.NewCoord(3, 4))
 	assert.Equal(t, 2, int(simpleCoords.NumCoords()), "Number of coordinates should be the 2")
 	assert.Equal(t, []float64{1, 2}, simpleCoords.Get(0).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 	assert.Equal(t, []float64{3, 4}, simpleCoords.Get(1).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 
-	err = simpleCoords.Add(geom.NewCoord(3, 4, 5))
-	assert.Error(t, err)
+	assert.Panics(t, func() {simpleCoords.Add(geom.NewCoord(3, 4, 5))})
 	assert.Equal(t, 2, int(simpleCoords.NumCoords()), "Number of coordinates should be the 2")
 	assert.Equal(t, []float64{1, 2}, simpleCoords.Get(0).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 	assert.Equal(t, []float64{3, 4}, simpleCoords.Get(1).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
@@ -108,36 +96,31 @@ func CoordsAddTestImpl(t *testing.T, simpleCoords geom.Coords) {
 func CoordsSetTestImpl(t *testing.T, coordsFunc func([]float64) geom.Coords) {
 	simpleCoords := coordsFunc([]float64{1, 2, 3, 4, 5, 6})
 
-	err := simpleCoords.Set(1, geom.NewCoord(30, 40))
-	assert.NoError(t, err)
+	simpleCoords.Set(1, geom.NewCoord(30, 40))
 	assert.Equal(t, 3, int(simpleCoords.NumCoords()), "Number of coordinates should be the 3")
 	assert.Equal(t, []float64{1, 2}, simpleCoords.Get(0).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 	assert.Equal(t, []float64{30, 40}, simpleCoords.Get(1).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 	assert.Equal(t, []float64{5, 6}, simpleCoords.Get(2).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 
-	err = simpleCoords.Set(0, geom.NewCoord(10, 20))
-	assert.NoError(t, err)
+	simpleCoords.Set(0, geom.NewCoord(10, 20))
 	assert.Equal(t, int(simpleCoords.NumCoords()), 3, "Number of coordinates should be the 3")
 	assert.Equal(t, []float64{10, 20}, simpleCoords.Get(0).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 	assert.Equal(t, []float64{30, 40}, simpleCoords.Get(1).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 	assert.Equal(t, []float64{5, 6}, simpleCoords.Get(2).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 
-	err = simpleCoords.Set(2, geom.NewCoord(50, 60))
-	assert.NoError(t, err)
+	simpleCoords.Set(2, geom.NewCoord(50, 60))
 	assert.Equal(t, int(simpleCoords.NumCoords()), 3, "Number of coordinates should be the 3")
 	assert.Equal(t, []float64{10, 20}, simpleCoords.Get(0).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 	assert.Equal(t, []float64{30, 40}, simpleCoords.Get(1).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 	assert.Equal(t, []float64{50, 60}, simpleCoords.Get(2).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 
-	err = simpleCoords.Set(3, geom.NewCoord(99, 9))
-	assert.Error(t, err)
+	assert.Panics(t, func() {simpleCoords.Set(3, geom.NewCoord(99, 9))})
 	assert.Equal(t, int(simpleCoords.NumCoords()), 3, "Number of coordinates should be the 3")
 	assert.Equal(t, []float64{10, 20}, simpleCoords.Get(0).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 	assert.Equal(t, []float64{30, 40}, simpleCoords.Get(1).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 	assert.Equal(t, []float64{50, 60}, simpleCoords.Get(2).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 
-	err = simpleCoords.Set(2, geom.NewCoord(99, 99, 99))
-	assert.Error(t, err)
+	assert.Panics(t, func() {simpleCoords.Set(2, geom.NewCoord(99, 99, 99))})
 	assert.Equal(t, int(simpleCoords.NumCoords()), 3, "Number of coordinates should be the 3")
 	assert.Equal(t, []float64{10, 20}, simpleCoords.Get(0).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
 	assert.Equal(t, []float64{30, 40}, simpleCoords.Get(1).ToArray(), fmt.Sprintf("Incorrect first coordinate in %v", simpleCoords))
