@@ -13,7 +13,7 @@ type Point interface {
 	String() string
 }
 
-func NewCoord(ordinals ...float64) Point {
+func NewPoint(ordinals ...float64) Point {
 	coords := NewCoords64WithCapacityAndDimensions(1, uint8(len(ordinals)))
 	coords.InsertRaw(0, ordinals)
 	return coords.Get(0);
