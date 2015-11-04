@@ -12,3 +12,8 @@ func TestNewLineInsufficientCoords(t *testing.T) {
 func TestNewLineCoords(t *testing.T) {
 	geom.NewLine(geom.NewCoords64FromSlice(2, []float64{1, 1, 5, 5}))
 }
+
+func TestLineCoords(t *testing.T) {
+	line := geom.NewLine(geom.NewCoords64FromSlice(2, []float64{1, 1, 5, 5}))
+	assert.Equal(t, 2, int(line.Coords().NumCoords()))
+}

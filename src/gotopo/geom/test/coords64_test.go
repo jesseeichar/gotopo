@@ -58,9 +58,34 @@ func TestCoords64Insert(t *testing.T) {
 func TestCoords64Add(t *testing.T) {
 	CoordsAddTestImpl(t, geom.NewCoords64())
 }
-
+func rwCoords642D(values []float64) geom.ReadWriteCoords {
+	return geom.NewCoords64FromSlice(2, values)
+}
+func rwCoords643D(values []float64) geom.ReadWriteCoords {
+	return geom.NewCoords64FromSlice(3, values)
+}
+func coords642D(values []float64) geom.Coords {
+	return geom.Coords(rwCoords642D(values))
+}
+func coords643D(values []float64) geom.Coords {
+	return geom.Coords(rwCoords643D(values))
+}
 func TestCoords64Set(t *testing.T) {
-	CoordsSetTestImpl(t, func(values []float64) geom.Coords {
-		return geom.NewCoords64FromSlice(2, values)
-	})
+	CoordsSetTestImpl(t, rwCoords642D)
+}
+
+func TestCoords64Equals(t *testing.T) {
+	CoordsEqualsTestImpl(t, coords642D, coords643D)
+}
+func TestCoords64Get(t *testing.T) {
+	CoordsGetTestImpl(t, coords642D)
+}
+func TestIsEmpty64Get(t *testing.T) {
+	CoordsIsEmptyTestImpl(t, coords642D)
+}
+func TestNumCoords64Get(t *testing.T) {
+	CoordsNumCoordsTestImpl(t, coords642D)
+}
+func TestNumDim64Get(t *testing.T) {
+	CoordsNumDimTestImpl(t, coords642D, coords643D)
 }
