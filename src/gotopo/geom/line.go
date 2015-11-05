@@ -30,3 +30,25 @@ func (this Line) Equals(other Geometry) bool {
 		return EqualsCoords(this.coordinates, other.Coords())
 	}
 }
+
+func (this Line) Bounds() Bounds {
+	min := this.coordinates.Get(0).ToArray()
+	max := append(make([]float64, len(min)), min...)
+
+	for i := uint32(1); i < this.coordinates.NumCoords() - 1; i++ {
+		coord := this.coordinates.Get(i)
+		for dim := uint8(0); dim < coord.NumDim(); dim++ {
+			ord := coord.Ord(dim)
+			if ord < min[dim] {
+				min[dim] = ord
+			}
+			if ord > max[dim] {
+				max[dim] = ord
+			}
+		}
+	}
+	boundsCoords := this.coordinates.Factory().CreateFromRawData(min...)
+	boundsCoords.InsertRaw(1, max)
+	return Bounds{min:boundsCoords.Get(0), max:boundsCoords.Get(1)}
+
+}

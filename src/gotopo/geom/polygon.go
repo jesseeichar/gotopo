@@ -9,6 +9,9 @@ var _ Geometry = Polygon{}       // Verify that coordsJoined implements Geometry
 var _ Geometry = (*Polygon)(nil) // Verify that *coordsJoined implements Geometry
 
 func NewPolygon(shell LinearRing, holes []LinearRing) Polygon {
+	if holes == nil {
+		holes = []LinearRing{}
+	}
 	return Polygon{shell, holes}
 }
 
@@ -21,6 +24,14 @@ func (this Polygon) Coords() Coords {
 }
 func (this Polygon) Shell() LinearRing {
 	return this.shell
+}
+
+func (this Polygon) NumHoles() uint32 {
+	return uint32(len(this.holes))
+}
+
+func (this Polygon) Bounds() Bounds {
+	return this.shell.Bounds()
 }
 
 func (this Polygon) Hole(holeIdx uint32) LinearRing {

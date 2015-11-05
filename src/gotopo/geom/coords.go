@@ -8,6 +8,7 @@ An interface to allow access to the underlying coordinates of a geometry.
 In order to improve performance or
  */
 type Coords interface {
+	Factory() CoordsFactory
 	NumDim() uint8
 	NumCoords() uint32
 	IsEmpty() bool
@@ -27,6 +28,13 @@ type WriteCoords interface {
 type ReadWriteCoords interface {
 	Coords
 	WriteCoords
+}
+
+type CoordsFactory interface {
+	Create() ReadWriteCoords
+	CreateFromRawData(data ...float64) ReadWriteCoords
+	CreateFromPoints(points ...Point) ReadWriteCoords
+	CopyFromGeometry(geom Geometry) ReadWriteCoords
 }
 
 func EqualsCoords(coords1, coords2 Coords) bool {

@@ -1,83 +1,28 @@
-package geom
+package coords64
 import (
 	"fmt"
+	"gotopo/geom"
 )
 
-type point64 struct {
-	data  coords64
-	index uint32
-}
-
-var _ Point = point64{}       // Verify that point64 implements Point.
-var _ Point = (*point64)(nil) // Verify that *point64 implements Point
-
-func (this point64) X() float64 {
-	return this.data.data[this.index]
-}
-func (this point64) Y() float64 {
-	return this.data.data[this.index + 1]
-
-}
-func (this point64) Ord(dimIdx uint8) float64 {
-	return this.data.data[this.index + uint32(dimIdx)]
-}
-func (this point64) NumDim() uint8 {
-	return this.data.dimensions
-}
-func (this point64) ToArray() []float64 {
-	endIdx := this.index + uint32(this.data.dimensions)
-	return this.data.data[this.index:endIdx]
-}
-func (this point64) String() string {
-	return CoordString(this)
-}
-
-func (this point64) Coords() Coords {
-	return this.data
-}
-
-func (this point64) Equals(geom Geometry) bool {
-	switch point := geom.(type) {
-	default:
-		return false
-	case Point:
-		if this.NumDim() != point.NumDim() {
-			return false
-		}
-		for i := uint8(0); i < this.NumDim(); i++ {
-			if this.Ord(i) != point.Ord(i) {
-				return false
-			}
-		}
-		return true;
-	}
-}
-
-func (this point64) Visit(visitor GeometryVisitor) {
-	visitor(this)
-}
-
-
-// ===============================================================================================================
 type coords64 struct {
 	data       []float64
 	dimensions uint8
 }
 
-var _ ReadWriteCoords = NewCoords64()   // Verify that *coords64 implements ReadWriteCoords
+var _ geom.ReadWriteCoords = NewCoords64()   // Verify that *coords64 implements ReadWriteCoords
 
-func NewCoords64() ReadWriteCoords {
-	return NewCoords64WithDimensions(DEFAULT_NUM_DIMENSIONS)
+func NewCoords64() geom.ReadWriteCoords {
+	return NewCoords64WithDimensions(geom.DEFAULT_NUM_DIMENSIONS)
 }
 
-func NewCoords64WithCapacity(capacity uint32) ReadWriteCoords {
-	return NewCoords64WithCapacityAndDimensions(capacity, DEFAULT_NUM_DIMENSIONS)
+func NewCoords64WithCapacity(capacity uint32) geom.ReadWriteCoords {
+	return NewCoords64WithCapacityAndDimensions(capacity, geom.DEFAULT_NUM_DIMENSIONS)
 }
-func NewCoords64WithDimensions(dimensions uint8) ReadWriteCoords {
+func NewCoords64WithDimensions(dimensions uint8) geom.ReadWriteCoords {
 	return NewCoords64WithCapacityAndDimensions(0, dimensions)
 }
 
-func NewCoords64WithCapacityAndDimensions(capacity uint32, dimensions uint8) ReadWriteCoords {
+func NewCoords64WithCapacityAndDimensions(capacity uint32, dimensions uint8) geom.ReadWriteCoords {
 	sliceCapacity := capacity * uint32(dimensions)
 	if sliceCapacity < uint32(dimensions) {
 		return &coords64{
@@ -90,7 +35,7 @@ func NewCoords64WithCapacityAndDimensions(capacity uint32, dimensions uint8) Rea
 	}
 }
 
-func NewCoords64FromSlice(dimensions uint8, data []float64) ReadWriteCoords {
+func NewCoords64FromSlice(dimensions uint8, data []float64) geom.ReadWriteCoords {
 	if len(data) % int(dimensions) != 0 {
 		panic(fmt.Sprintf("The number of eleements in the data array must be divisible by the number of dimensions." +
 		" Array size '%d'.  Dimensions: '%d'", len(data), dimensions))
@@ -111,13 +56,13 @@ func (this coords64) IsEmpty() bool {
 	return len(this.data) == 0
 }
 
-func (this coords64) Get(coordIdx uint32) Point {
+func (this coords64) Get(coordIdx uint32) geom.Point {
 	if coordIdx >= this.NumCoords() {
 		panic(fmt.Sprintf("Out of bounds error: There are only %d coordinates, attempted to access %d", this.NumCoords(), coordIdx))
 	}
 	return point64{this, coordIdx * uint32(this.dimensions)}
 }
-func (this *coords64) Set(coordIdx uint32, newValue Point) {
+func (this *coords64) Set(coordIdx uint32, newValue geom.Point) {
 	if newValue.NumDim() != this.dimensions {
 		panic(fmt.Sprintf("Number of dimensions in coordinate(%d) do not match those in this coords object (%d)",
 			newValue.NumDim(), this.dimensions))
@@ -133,14 +78,14 @@ func (this *coords64) Set(coordIdx uint32, newValue Point) {
 		this.data[setIdx + uint32(i)] = newValue.Ord(i)
 	}
 }
-func (this *coords64) Add(newValue Point) {
+func (this *coords64) Add(newValue geom.Point) {
 	if newValue.NumDim() != this.dimensions {
 		panic(fmt.Sprintf("Number of dimensions in coordinate(%d) do not match those in this coords object (%d)",
 			newValue.NumDim(), this.dimensions))
 	}
 	this.data = append(this.data, newValue.ToArray()...)
 }
-func (this *coords64) Insert(idx uint32, newValue Point) {
+func (this *coords64) Insert(idx uint32, newValue geom.Point) {
 	this.InsertRaw(idx, newValue.ToArray())
 }
 func (this *coords64) InsertRaw(idx uint32, ordinals []float64) {
@@ -163,3 +108,8 @@ func (this *coords64) InsertRaw(idx uint32, ordinals []float64) {
 		this.data[insertIdx + uint32(i)] = o
 	}
 }
+
+func (this coords64) Factory() geom.CoordsFactory {
+	return CoordsFactory64{this.dimensions}
+}
+

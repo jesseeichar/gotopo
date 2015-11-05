@@ -35,6 +35,10 @@ func (this LinearRing) Visit(visitor GeometryVisitor) {
 	visitor(this)
 }
 
+func (this LinearRing) Bounds() Bounds {
+	return this.line.Bounds()
+}
+
 func (this LinearRing) Equals(other Geometry) bool {
 	switch ring := other.(type) {
 	default:

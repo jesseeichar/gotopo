@@ -1,5 +1,7 @@
 package geom
-import "fmt"
+import (
+	"fmt"
+)
 
 type coordsJoined struct {
 	allCoords []Coords
@@ -59,4 +61,8 @@ func (this coordsJoined) Get(coordIdx uint32) Point {
 	}
 
 	panic(fmt.Sprintf("%d is out of bounds. There are only %s coordinates total", coordIdx, count))
+}
+
+func (this coordsJoined) Factory() CoordsFactory {
+	return this.allCoords[0].Factory()
 }
