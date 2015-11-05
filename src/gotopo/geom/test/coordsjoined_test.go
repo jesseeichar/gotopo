@@ -1,10 +1,9 @@
-package coordsjoined_test
+package test
 import (
 	"testing"
 	"gotopo/geom"
 	"github.com/stretchr/testify/assert"
 	"gotopo/geom/coords64"
-	"gotopo/geom/test"
 )
 
 func TestCoordsJoined(t *testing.T) {
@@ -32,17 +31,17 @@ func coordsJoined3D(values []float64) geom.Coords {
 	return geom.NewCoordsJoined(c1, c2)
 }
 func TestCoordsJoinedEquals(t *testing.T) {
-	test.CoordsEqualsTestImpl(t, coordsJoined2D, coordsJoined3D)
+	CoordsEqualsTestImpl(t, coordsJoined2D, coordsJoined3D)
 }
 func TestCoordsJoinedGet(t *testing.T) {
-	test.CoordsGetTestImpl(t, coordsJoined2D)
+	CoordsGetTestImpl(t, coordsJoined2D)
 }
 func TestIsEmptyJoinedGet(t *testing.T) {
-	test.CoordsIsEmptyTestImpl(t, coordsJoined2D)
+	CoordsIsEmptyTestImpl(t, coordsJoined2D)
 }
 func TestNumCoordsJoinedGet(t *testing.T) {
-	test.CoordsNumCoordsTestImpl(t, coordsJoined2D)
+	CoordsNumCoordsTestImpl(t, coordsJoined2D)
 }
 func TestNumDimJoinedGet(t *testing.T) {
-	test.CoordsNumDimTestImpl(t, coordsJoined2D, coordsJoined3D)
+	CoordsNumDimTestImpl(t, coordsJoined2D, coordsJoined3D)
 }
